@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MPzK2/d9ZqaeZcWnNezbyrWlNdz2YIJd5rFLL6SLPH4='; style-src 'sha256-RQQDo90e2vYUMWszvNriRCfncyb+ImTDIGVtMLnGMP4='; img-src data:; connect-src https://wxjfedwylfkvfaolqeda.supabase.co; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070f">
+<title>شب‌بان · مدیریت</title>
+<style>
+:root{
+  --bg:#05070f; --bg2:#0a1022; --card:rgba(255,255,255,.035); --card2:rgba(255,255,255,.06);
+  --line:rgba(241,211,155,.13); --line2:rgba(241,211,155,.26);
+  --gold:#f1d39b; --gold2:#c9a063; --ink:#eef0f7; --ink2:#aab1c6; --ink3:#727a93;
+  --ok:#2fd67b; --bad:#ff5a6a; --warn:#ffb648; --blue:#8fbcff;
+  --r:16px; --r2:12px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);
+  font:15px/1.7 "Vazirmatn",Tahoma,"Segoe UI",sans-serif;overflow-x:hidden;
+  background-image:radial-gradient(1200px 600px at 85% -10%,rgba(40,70,140,.28),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(201,160,99,.10),transparent 60%);
+  background-attachment:scroll}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px 48px}
+.ltr{direction:ltr;unicode-bidi:isolate;text-align:left}
+.mono{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace}
+.muted{color:var(--ink2)}
+.small{font-size:12.5px}
+.hide{display:none!important}
+h1,h2,h3{margin:0;font-weight:700;line-height:1.4}
+h2{font-size:18px;color:var(--gold)}
+h3{font-size:15px;color:var(--gold)}
+/* header */
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(to bottom,rgba(5,7,15,.96),rgba(5,7,15,.88));
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topin{max-width:1080px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.moon{width:30px;height:30px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,#fff6df,#f1d39b 45%,#c9a063 75%);
+  box-shadow:0 0 18px rgba(241,211,155,.45);position:relative}
+.moon::after{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:var(--bg);top:-3px;left:-6px}
+.brand b{color:var(--gold);font-size:17px;white-space:nowrap}
+.brand span{display:block;font-size:12px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+.brand .bt{min-width:0}
+nav.tabs{max-width:1080px;margin:0 auto;padding:0 16px 10px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+nav.tabs a{display:block;text-align:center;text-decoration:none;color:var(--ink2);padding:7px 4px;border-radius:12px;border:1px solid transparent;font-size:14px;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink);background:var(--card)}
+nav.tabs a.on{color:#1a1206;background:linear-gradient(180deg,var(--gold),var(--gold2));font-weight:700}
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
+.card > h2,.card > h3{margin-bottom:10px}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px}
+/* buttons */
+.btn{appearance:none;border:1px solid var(--line2);background:var(--card2);color:var(--ink);border-radius:12px;padding:9px 16px;cursor:pointer;
+  font-weight:600;font-size:14px;line-height:1.5;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;transition:filter .15s,background .15s}
+.btn:hover{background:rgba(255,255,255,.1)}
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,nav.tabs a:focus-visible,.row:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#1a1206;border-color:transparent}
+.btn.gold:hover{filter:brightness(1.06)}
+.btn.red{background:rgba(255,90,106,.12);border-color:rgba(255,90,106,.45);color:#ffb3bb}
+.btn.green{background:rgba(47,214,123,.1);border-color:rgba(47,214,123,.4);color:#a5f0c7}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 12px;min-height:34px;font-size:13px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed;filter:none}
+.btn.busy{position:relative;color:transparent!important}
+.btn.busy::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--gold);border-top-color:transparent;animation:spin .7s linear infinite}
+.btn.gold.busy::after{border-color:#1a1206;border-top-color:transparent}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+/* forms */
+label.f{display:block;margin-top:12px}
+label.f > span{display:block;font-size:13px;color:var(--ink2);margin-bottom:5px}
+input.in,select.in,textarea.in{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line2);border-radius:12px;padding:10px 12px;min-height:44px;outline:none}
+textarea.in{resize:vertical;min-height:90px;line-height:1.7}
+input.in:focus,select.in:focus,textarea.in:focus{border-color:var(--gold)}
+input.in.err,textarea.in.err{border-color:var(--bad)}
+.code-in{font-size:24px;letter-spacing:.35em;text-align:center;direction:ltr}
+.hint{font-size:12.5px;color:var(--ink3);margin-top:4px;display:flex;justify-content:space-between;gap:8px}
+.hint.err{color:#ff9aa4}
+select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);
+  background-position:16px 50%,11px 50%;background-size:5px 5px;background-repeat:no-repeat;padding-left:30px}
+select.in option{background:#0a1022}
+/* auth */
+.auth{max-width:420px;margin:7vh auto 0;padding:0 16px}
+.auth .logo{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:6px;text-align:center}
+.auth .logo .moon{width:54px;height:54px}
+.auth .logo .moon::after{width:44px;height:44px;top:-6px;left:-11px}
+.auth .logo b{font-size:22px;color:var(--gold)}
+.auth p{margin:8px 0}
+.qr{display:flex;justify-content:center;margin:12px 0}
+.qr img{width:200px;height:200px;background:#fff;border-radius:12px;padding:8px}
+.secret{font-size:19px;letter-spacing:.06em;word-spacing:.3em;overflow-wrap:anywhere;text-align:center;padding:12px;border-radius:12px;background:rgba(0,0,0,.4);border:1px dashed var(--line2);color:var(--gold);direction:ltr;user-select:all}
+ol.steps{padding-right:20px;margin:8px 0;color:var(--ink2);font-size:14px}
+ol.steps li{margin:3px 0}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.stat .k{font-size:12.5px;color:var(--ink2)}
+.stat .v{font-size:24px;font-weight:800;color:var(--ink);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat .v small{font-size:12px;color:var(--ink3);font-weight:400;margin-right:3px}
+.stat.hl{border-color:var(--line2);background:linear-gradient(160deg,rgba(241,211,155,.10),rgba(255,255,255,.02))}
+.stat.hl .v{color:var(--gold)}
+.charts{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:760px){.charts{grid-template-columns:1fr 1fr}}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .bar{fill:var(--gold2)}
+.chart .bar.on{fill:var(--gold)}
+.chart .hit{fill:transparent;cursor:pointer}
+.chart .grid{stroke:rgba(255,255,255,.08);stroke-width:1}
+.chart .base{stroke:rgba(255,255,255,.22);stroke-width:1}
+.chart text{fill:var(--ink3);font-size:10px;font-family:inherit}
+.chart .read{font-size:13px;color:var(--ink2);min-height:22px;margin-top:6px}
+.chart .read b{color:var(--gold)}
+/* users list */
+.toolbar{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{appearance:none;border:1px solid var(--line2);background:transparent;color:var(--ink2);border-radius:999px;padding:5px 14px;cursor:pointer;font-size:13.5px;min-height:36px}
+.chip.on{background:rgba(241,211,155,.16);color:var(--gold);border-color:var(--gold2);font-weight:700}
+.list{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.row{display:block;text-decoration:none;width:100%;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;color:inherit;font:inherit}
+.row:hover{background:var(--card2);border-color:var(--line2)}
+.row .l1{display:flex;align-items:center;gap:8px;justify-content:space-between;min-width:0}
+.row .em{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;direction:ltr;text-align:left;flex:1}
+.row .l2{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink3);margin-top:4px}
+.badges{display:flex;gap:4px;flex:none}
+.badge{font-size:11.5px;border-radius:999px;padding:1px 9px;border:1px solid;white-space:nowrap;font-weight:600}
+.badge.pro{color:var(--gold);border-color:rgba(241,211,155,.5);background:rgba(241,211,155,.1)}
+.badge.free{color:var(--ink2);border-color:rgba(255,255,255,.18)}
+.badge.blk{color:#ffb3bb;border-color:rgba(255,90,106,.5);background:rgba(255,90,106,.1)}
+.badge.ok{color:#a5f0c7;border-color:rgba(47,214,123,.45);background:rgba(47,214,123,.08)}
+.badge.off{color:var(--ink3);border-color:rgba(255,255,255,.14)}
+.pager{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;color:var(--ink2);font-size:14px}
+.empty{text-align:center;color:var(--ink3);padding:28px 10px;border:1px dashed var(--line);border-radius:14px;margin-top:12px}
+.loading{text-align:center;color:var(--ink3);padding:28px 10px}
+.loading::before{content:"";display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold2);border-top-color:transparent;animation:spin .7s linear infinite;vertical-align:-2px;margin-left:8px}
+/* detail */
+.back{margin-top:14px}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14px}
+dl.kv dt{color:var(--ink3);white-space:nowrap}
+dl.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.dev{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;background:rgba(0,0,0,.18)}
+.dev .l1{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dev .ua{font-size:12px;color:var(--ink3);overflow-wrap:anywhere;margin-top:4px;direction:ltr;text-align:left}
+.dev .l2{font-size:12.5px;color:var(--ink2);display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.dev.revoked{opacity:.75;border-style:dashed}
+.ev{border-bottom:1px solid var(--line);padding:9px 0}
+.ev:last-child{border-bottom:0}
+.ev .l1{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px}
+.ev .kind{font-weight:700}
+.ev .kind.warn{color:var(--warn)}.ev .kind.bad{color:#ff9aa4}.ev .kind.adm{color:var(--blue)}.ev .kind.good{color:#a5f0c7}
+.ev .who a{color:var(--blue);text-decoration:none}
+.ev .who a:hover{text-decoration:underline}
+.ev .who{font-size:12.5px;color:var(--ink3);direction:ltr;text-align:left;overflow-wrap:anywhere}
+pre.json{margin:5px 0 0;padding:7px 10px;border-radius:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06);font-size:12px;
+  color:#c9cfdf;white-space:pre-wrap;word-break:break-all;direction:ltr;text-align:left;max-height:180px;overflow:auto}
+.cols{display:grid;grid-template-columns:1fr;gap:0 14px}
+@media(min-width:900px){.cols{grid-template-columns:1fr 1fr}}
+.note-box{white-space:pre-wrap;overflow-wrap:anywhere}
+.pk{direction:ltr;text-align:left;word-break:break-all;font-size:12.5px;padding:10px 12px;background:rgba(0,0,0,.4);border:1px dashed var(--line2);border-radius:12px;color:var(--gold);margin:10px 0}
+.setup{max-width:520px;margin:10vh auto 0;padding:0 16px;text-align:center}
+.setup code{direction:ltr;unicode-bidi:isolate;background:rgba(0,0,0,.4);padding:1px 6px;border-radius:6px;color:var(--gold)}
+/* modal */
+.ov{position:fixed;inset:0;z-index:50;background:rgba(2,3,8,.72);display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .15s ease}
+.dlg{width:100%;max-width:400px;background:#0c1328;border:1px solid var(--line2);border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.dlg h3{font-size:17px}
+.dlg p{margin:8px 0 16px;color:var(--ink2);overflow-wrap:anywhere;white-space:pre-line}
+.dlg .btns{justify-content:flex-start}
+.dlg .btns .btn{flex:1}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+/* toasts */
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:60;display:flex;flex-direction:column;gap:8px;width:min(420px,calc(100vw - 32px));pointer-events:none}
+.toast{pointer-events:auto;background:#101830;border:1px solid var(--line2);border-right:4px solid var(--gold);border-radius:12px;padding:10px 14px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:up .2s ease}
+.toast.err{border-right-color:var(--bad)}
+.toast.ok{border-right-color:var(--ok)}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:380px){body{font-size:14px}.stat .v{font-size:21px}nav.tabs a{font-size:13px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.fbc .fbmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--ink3)}
+.fbc .fbmeta b{color:var(--ink);font-size:14px}
+.fbc .fbb{white-space:pre-wrap;word-break:break-word;line-height:1.9;margin:8px 0;color:var(--ink)}
+.fbc .fbrep{border-right:3px solid var(--gold2);padding:8px 12px;margin:10px 0;background:rgba(241,211,155,.06);border-radius:10px}
+.fbc .fbrep small{color:var(--gold);font-size:12.5px}
+.fbc label.f{display:block;margin-top:10px}
+.fbc .btns{margin-top:10px}
+.card.fbhid{opacity:.72;border-style:dashed}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toasts" aria-live="polite" role="status"></div>
+<script>
+'use strict';
+(function () {
+/* ======= تنظیمات ======= */
+const SB_URL = 'https://wxjfedwylfkvfaolqeda.supabase.co';
+const SB_KEY = 'sb_publishable_3VTATqAZu8JKEQwWfB3Ipg_EQGvOf7F'; // کلید publishable / anon پروژه — بعداً پر می‌شه
+
+const FN_URL = SB_URL + '/functions/v1/admin';
+const FB_URL = SB_URL + '/functions/v1/feedback';
+const SKEY = 'shabban_admin_s';
+const AKEY = 'shabban_admin_act';
+const IDLE_MS = 30 * 60 * 1000;
+const PAGE = 25;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL = /^[^\s@<>()",;:]{1,64}@[^\s@<>()",;:]+\.[^\s@<>()",;:]{2,}$/;
+
+const nf = new Intl.NumberFormat('fa-IR');
+const df = new Intl.DateTimeFormat('fa-IR', { dateStyle: 'medium', timeStyle: 'short' });
+const dayF = new Intl.DateTimeFormat('fa-IR', { month: 'short', day: 'numeric' });
+const dayN = new Intl.DateTimeFormat('fa-IR', { day: 'numeric' });
+const n = (v) => nf.format(Number(v) || 0);
+const dt = (v) => { if (!v) return '—'; const d = new Date(v); return isNaN(d) ? '—' : df.format(d); };
+
+const KINDS = {
+  device_limit: ['رسیدن به سقف دستگاه', 'warn'],
+  device_add: ['اضافه شدن دستگاه', ''],
+  purchase: ['خرید موفق', 'good'],
+  purchase_bad_sig: ['خرید با امضای نامعتبر', 'bad'],
+  purchase_token_reuse: ['استفاده‌ی دوباره از توکن خرید', 'bad'],
+  purchase_payload_mismatch: ['ناهمخوانی اطلاعات خرید', 'bad'],
+  blocked_try: ['تلاش حساب مسدود', 'bad'],
+  revoked_try: ['تلاش دستگاهِ آزادشده', 'warn'],
+  bad_device_proof: ['اثبات دستگاه نامعتبر', 'bad'],
+  admin_denied: ['تلاش ورود غیرمجاز به پنل', 'bad'],
+  admin_set_pro: ['مدیر: تغییر پرو', 'adm'],
+  admin_set_blocked: ['مدیر: تغییر مسدودی', 'adm'],
+  admin_set_note: ['مدیر: ویرایش یادداشت', 'adm'],
+  admin_revoke_device: ['مدیر: آزاد کردن دستگاه', 'adm'],
+  admin_restore_device: ['مدیر: برگردوندن دستگاه', 'adm'],
+  admin_settings: ['مدیر: تغییر تنظیمات', 'adm'],
+};
+const ERR = {
+  RATE: 'درخواست‌ها زیاد شد؛ یه دقیقه صبر کن و دوباره امتحان کن.',
+  BAD_REQUEST: 'اطلاعات فرستاده‌شده درست نبود.',
+  NOT_FOUND: 'پیدا نشد (شاید حذف شده باشه).',
+  DEVICE_LIMIT: 'این کاربر به سقف دستگاه رسیده؛ اول یکی از دستگاه‌های فعالش رو آزاد کن.',
+  SERVER: 'خطای سرور؛ کمی بعد دوباره امتحان کن.',
+  NETWORK: 'اتصال برقرار نشد؛ اینترنتت رو چک کن.',
+  ORIGIN: 'این آدرس اجازه‌ی دسترسی به سرور رو نداره (ADMIN_ORIGINS).',
+  TOO_LARGE: 'درخواست بیش از حد بزرگه.',
+  BAD_ACTION: 'این عملیات روی سرور تعریف نشده.',
+  METHOD: 'درخواست نامعتبر.',
+  FORBIDDEN: 'این حساب دسترسی مدیریت نداره.',
+  AUTH: 'نشستت تموم شد؛ دوباره وارد شو.',
+  MFA_REQUIRED: 'ورود دومرحله‌ای لازمه.',
+  TOO_LONG: 'متن خیلی بلنده (حداکثر ۶۰۰ حرف).',
+  BAD_INPUT: 'اطلاعات فرستاده‌شده درست نبود.',
+  MFA_MISMATCH: 'کد دومرحله‌ای این حساب با کد ثبت‌شده‌ی مدیر یکی نیست. دسترسی رد شد.',
+};
+const errMsg = (c) => ERR[c] || ('خطا: ' + String(c || 'نامشخص').slice(0, 40));
+
+/* ======= ساخت امن DOM (بدون innerHTML) ======= */
+const PROPS = new Set(['noValidate', 'value', 'disabled', 'checked', 'maxLength', 'placeholder', 'type', 'name', 'autocomplete', 'inputMode', 'rows', 'selected', 'spellcheck', 'autofocus', 'href', 'id']);
+function h(tag, a) {
+  const e = document.createElement(tag);
+  if (a) for (const k of Object.keys(a)) {
+    const v = a[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'text') e.textContent = String(v);
+    else if (k === 'on') for (const ev of Object.keys(v)) e.addEventListener(ev, v[ev]);
+    else if (PROPS.has(k)) e[k] = v;
+    else if (/^(aria-|data-|role$|dir$|title$|lang$|for$|tabindex$|alt$|src$|min$|max$|step$|pattern$|enterkeyhint$)/.test(k)) e.setAttribute(k, v === true ? '' : String(v));
+  }
+  for (let i = 2; i < arguments.length; i++) add(e, arguments[i]);
+  return e;
+}
+function add(e, c) {
+  if (c == null || c === false) return;
+  if (Array.isArray(c)) { c.forEach((x) => add(e, x)); return; }
+  e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function s(tag, attrs) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, String(attrs[k])); return e; }
+function clear(e) { while (e.firstChild) e.removeChild(e.firstChild); }
+const root = document.getElementById('root');
+
+/* ======= پیام و تأیید ======= */
+function toast(msg, kind) {
+  const box = document.getElementById('toasts');
+  const t = h('div', { class: 'toast ' + (kind || ''), text: msg });
+  box.append(t);
+  while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(() => t.remove(), kind === 'err' ? 6000 : 3500);
+}
+function confirmBox(title, msg, okText, danger) {
+  return new Promise((resolve) => {
+    const prev = document.activeElement;
+    const done = (v) => { ov.remove(); document.removeEventListener('keydown', key, true); if (prev && prev.focus) prev.focus(); resolve(v); };
+    const ok = h('button', { class: 'btn ' + (danger ? 'red' : 'gold'), type: 'button', text: okText || 'تأیید', on: { click: () => done(true) } });
+    const no = h('button', { class: 'btn ghost', type: 'button', text: 'انصراف', on: { click: () => done(false) } });
+    const ov = h('div', { class: 'ov', role: 'dialog', 'aria-modal': 'true', 'aria-label': title, on: { click: (e) => { if (e.target === ov) done(false); } } },
+      h('div', { class: 'dlg' }, h('h3', { text: title }), h('p', { text: msg }), h('div', { class: 'btns' }, ok, no)));
+    function key(e) {
+      if (e.key === 'Escape') { e.preventDefault(); done(false); }
+      else if (e.key === 'Tab') { e.preventDefault(); (document.activeElement === ok ? no : ok).focus(); }
+    }
+    document.addEventListener('keydown', key, true);
+    document.body.append(ov);
+    no.focus();
+  });
+}
+const fbApi = (action, body, quiet) => api(action, body, quiet, FB_URL);
+async function busy(btn, fn) {
+  if (btn.disabled) return;
+  btn.disabled = true; btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true');
+  try { return await fn(); } finally { btn.disabled = false; btn.classList.remove('busy'); btn.removeAttribute('aria-busy'); }
+}
+async function copyText(txt, btn) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(txt); ok = true; } catch (_) {
+    try {
+      const ta = h('textarea', { value: txt }); ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.append(ta); ta.select(); ok = document.execCommand('copy'); ta.remove();
+    } catch (_) { ok = false; }
+  }
+  toast(ok ? 'کپی شد ✓' : 'کپی نشد؛ دستی انتخاب و کپی کن.', ok ? 'ok' : 'err');
+  if (ok && btn) { const t = btn.textContent; btn.textContent = 'کپی شد ✓'; setTimeout(() => { btn.textContent = t; }, 1600); }
+}
+
+/* ======= نشست (فقط sessionStorage) ======= */
+let S = null, refreshTimer = 0, refreshing = null, stage = 'login', myEmail = '';
+function jwtPayload(t) {
+  try {
+    let p = String(t).split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (p.length % 4) p += '=';
+    return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(p), (c) => c.charCodeAt(0))));
+  } catch (_) { return null; }
+}
+const aal = () => { const p = S && jwtPayload(S.access_token); return p && p.aal; };
+function loadSess() {
+  try {
+    const x = JSON.parse(sessionStorage.getItem(SKEY) || 'null');
+    if (x && typeof x.access_token === 'string' && typeof x.refresh_token === 'string' && typeof x.expires_at === 'number') return x;
+  } catch (_) {}
+  return null;
+}
+function setSess(r) {
+  S = { access_token: r.access_token, refresh_token: r.refresh_token, expires_at: Date.now() + Math.max(60, Number(r.expires_in) || 3600) * 1000 };
+  try { sessionStorage.setItem(SKEY, JSON.stringify(S)); } catch (_) {}
+  schedRefresh();
+}
+function wipe() {
+  S = null; myEmail = ''; clearTimeout(refreshTimer);
+  try { sessionStorage.removeItem(SKEY); sessionStorage.removeItem(AKEY); } catch (_) {}
+}
+function schedRefresh() {
+  clearTimeout(refreshTimer);
+  if (!S) return;
+  const wait = Math.max(1000, S.expires_at - Date.now() - 60000);
+  refreshTimer = setTimeout(async () => { const r = await refresh(); if (r === 'dead') endSession(ERR.AUTH); else if (r === 'net') { refreshTimer = setTimeout(schedRefresh, 15000); } }, wait);
+}
+async function gt(path, opt) {
+  opt = opt || {};
+  const headers = { apikey: SB_KEY };
+  if (opt.body !== undefined) headers['Content-Type'] = 'application/json';
+  if (opt.token) headers.Authorization = 'Bearer ' + opt.token;
+  let r;
+  try {
+    r = await fetch(SB_URL + '/auth/v1' + path, { method: opt.method || 'POST', headers, body: opt.body !== undefined ? JSON.stringify(opt.body) : undefined, cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer' });
+  } catch (_) { return { ok: false, status: 0, data: null }; }
+  let data = null;
+  try { data = await r.json(); } catch (_) {}
+  return { ok: r.ok, status: r.status, data };
+}
+function gtErr(r, fallback) {
+  if (!r.status) return ERR.NETWORK;
+  if (r.status === 429) return 'تعداد تلاش‌ها زیاد شد؛ چند دقیقه صبر کن و دوباره امتحان کن.';
+  const c = (r.data && (r.data.error_code || r.data.code)) || '';
+  if (c === 'otp_expired' || c === 'invalid_credentials') return 'کد اشتباهه یا منقضی شده.';
+  if (c === 'mfa_verification_failed') return 'کد Authenticator اشتباهه؛ دوباره امتحان کن (ساعت گوشی باید دقیق باشه).';
+  if (c === 'mfa_challenge_expired') return 'زمان کد تموم شد؛ دوباره امتحان کن.';
+  if (c === 'otp_disabled' || c === 'signup_disabled' || c === 'user_not_found') return 'برای این ایمیل حسابی پیدا نشد.';
+  if (c === 'weak_password') return 'پسورد ضعیفه؛ حداقل ۱۲ نویسه با حرف و عدد، و ساده/لو رفته نباشه.';
+  if (c === 'same_password') return 'این پسورد همون پسورد فعلیه؛ یه پسورد جدید بذار.';
+  if (c === 'reauthentication_needed' || c === 'reauth_nonce_missing') return 'برای تغییر پسورد باید دوباره وارد بشی (خروج و ورود با کد ایمیل).';
+  if (c === 'email_address_invalid' || c === 'validation_failed') return 'ایمیل درست نیست.';
+  return fallback;
+}
+function refresh() {
+  if (!S) return Promise.resolve('dead');
+  if (refreshing) return refreshing;
+  refreshing = (async () => {
+    const r = await gt('/token?grant_type=refresh_token', { body: { refresh_token: S.refresh_token } });
+    if (r.ok && r.data && typeof r.data.access_token === 'string' && typeof r.data.refresh_token === 'string') { setSess(r.data); return 'ok'; }
+    if (!r.status || r.status >= 500 || r.status === 429) return 'net';
+    return 'dead';
+  })();
+  refreshing.finally(() => { refreshing = null; });
+  return refreshing;
+}
+async function endSession(msg, kind) {
+  const tok = S && S.access_token;
+  wipe();
+  if (tok) gt('/logout', { token: tok }).catch(() => {});
+  stage = 'login';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  showLogin();
+  if (msg) toast(msg, kind || 'err');
+}
+
+/* ======= عدم فعالیت ======= */
+let lastAct = Date.now();
+function touch() {
+  const now = Date.now();
+  if (now - lastAct < 5000) return;
+  lastAct = now;
+  try { sessionStorage.setItem(AKEY, String(now)); } catch (_) {}
+}
+['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach((ev) => addEventListener(ev, touch, { passive: true, capture: true }));
+setInterval(() => { if (S && Date.now() - lastAct > IDLE_MS) endSession('به‌خاطر ۳۰ دقیقه بی‌فعالیتی، از حساب خارج شدی.'); }, 20000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S && Date.now() - lastAct > IDLE_MS) endSession('به‌خاطر ۳۰ دقیقه بی‌فعالیتی، از حساب خارج شدی.'); });
+
+/* ======= تماس با تابع admin ======= */
+async function rawCall(action, body, url) {
+  let r;
+  try {
+    r = await fetch(url || FN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: 'Bearer ' + S.access_token },
+      body: JSON.stringify(Object.assign({}, body, { action })), cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer' });
+  } catch (_) { return { ok: false, code: 'NETWORK' }; }
+  let d = null;
+  try { d = await r.json(); } catch (_) {}
+  if (d && typeof d === 'object' && typeof d.ok === 'boolean') {
+    if (!d.ok && (typeof d.code !== 'string' || !/^[A-Z_]{2,30}$/.test(d.code))) d.code = 'SERVER';
+    return d;
+  }
+  return { ok: false, code: r.status === 401 ? 'AUTH' : r.status === 429 ? 'RATE' : r.status === 403 ? 'FORBIDDEN' : 'SERVER' };
+}
+async function api(action, body, quiet, url) {
+  if (!S) return { ok: false, code: 'AUTH' };
+  if (S.expires_at - Date.now() < 60000) {
+    const rr = await refresh();
+    if (rr === 'dead') { endSession(ERR.AUTH); return { ok: false, code: 'AUTH' }; }
+  }
+  let res = await rawCall(action, body || {}, url);
+  if (!res.ok && res.code === 'AUTH' && S) {
+    const rr = await refresh();
+    if (rr === 'ok') res = await rawCall(action, body || {}, url);
+  }
+  if (res.ok) return res;
+  if (res.code === 'AUTH') endSession(ERR.AUTH);
+  else if (res.code === 'FORBIDDEN' && !url) endSession(ERR.FORBIDDEN);
+  else if (res.code === 'MFA_REQUIRED') { toast('برای ادامه، ورود دومرحله‌ای رو انجام بده.', 'err'); startMfa(); }
+  else if (!quiet || !quiet.includes(res.code)) toast(errMsg(res.code), 'err');
+  return res;
+}
+
+/* ======= صفحه‌ی تنظیم نشده ======= */
+function showSetup() {
+  clear(root);
+  root.append(h('div', { class: 'setup' },
+    h('div', { class: 'auth' }, h('div', { class: 'logo' }, h('div', { class: 'moon' }), h('b', { text: 'شب‌بان · مدیریت' }))),
+    h('div', { class: 'card' },
+      h('h2', { text: 'کلید پروژه هنوز تنظیم نشده' }),
+      h('p', { class: 'muted' }, 'برای راه‌اندازی پنل، مقدار ', h('code', { text: 'SB_KEY' }), ' بالای اسکریپت این فایل باید با کلید publishable (anon) پروژه‌ی سوپابیس پر بشه.'),
+      h('p', { class: 'muted small', text: 'این کلید عمومیه و گذاشتنش تو فایل مشکلی نداره؛ کلید service_role رو هیچ‌وقت این‌جا نذار.' }))));
+}
+
+/* ======= ورود ======= */
+function authFrame(title, sub) {
+  clear(root);
+  const card = h('div', { class: 'card' });
+  root.append(h('div', { class: 'auth' },
+    h('div', { class: 'logo' }, h('div', { class: 'moon' }), h('b', { text: 'شب‌بان · مدیریت' }), h('span', { class: 'muted small', text: sub || 'فقط برای مدیر' })),
+    card));
+  if (title) card.append(h('h2', { text: title }));
+  return card;
+}
+let pendingEmail = '';
+let viaOtp = false;
+function showLogin() {
+  stage = 'login'; viaOtp = false;
+  const card = authFrame('ورود به پنل');
+  const inp = h('input', { class: 'in ltr', type: 'email', name: 'email', autocomplete: 'username', inputMode: 'email', placeholder: 'you@example.com', maxLength: 254, spellcheck: false, value: pendingEmail });
+  const pin = h('input', { class: 'in ltr', type: 'password', name: 'password', autocomplete: 'current-password', maxLength: 128, placeholder: 'پسورد' });
+  const hint = h('div', { class: 'hint err' });
+  const btn = h('button', { class: 'btn gold wide', type: 'submit', text: 'ورود' });
+  btn.style.marginTop = '14px';
+  const alt = h('button', { class: 'btn ghost wide', type: 'button', text: 'ورود با کد ایمیل (پسورد ندارم / فراموش کردم)', on: { click: showLoginOtp } });
+  alt.style.marginTop = '8px';
+  const form = h('form', { noValidate: true }, h('label', { class: 'f' }, h('span', { text: 'ایمیل مدیر' }), inp), h('label', { class: 'f' }, h('span', { text: 'پسورد' }), pin), hint, btn, alt);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = inp.value.trim().toLowerCase();
+    const password = pin.value;
+    if (!EMAIL.test(email) || email.length > 254) { inp.classList.add('err'); hint.textContent = 'یه ایمیل درست وارد کن.'; return; }
+    inp.classList.remove('err');
+    if (!password || password.length > 128) { pin.classList.add('err'); hint.textContent = 'پسورد رو وارد کن.'; return; }
+    pin.classList.remove('err'); hint.textContent = '';
+    busy(btn, async () => {
+      const r = await gt('/token?grant_type=password', { body: { email, password } });
+      if (!r.ok || !r.data || typeof r.data.access_token !== 'string') {
+        const c = (r.data && (r.data.error_code || r.data.code)) || '';
+        hint.textContent = c === 'invalid_credentials' ? 'ایمیل یا پسورد اشتباهه.' : gtErr(r, 'ورود انجام نشد؛ دوباره امتحان کن.');
+        pin.value = ''; return;
+      }
+      pendingEmail = email; pin.value = '';
+      setSess(r.data); lastAct = Date.now(); touch();
+      startMfa();
+    });
+  });
+  card.append(p_login_note(), form);
+  inp.focus();
+}
+function p_login_note() { return h('p', { class: 'muted small', text: 'بعد از پسورد، کد برنامه‌ی Authenticator هم لازمه. ایمیلی فرستاده نمی‌شه.' }); }
+function showLoginOtp() {
+  stage = 'login';
+  const card = authFrame('ورود با کد ایمیل');
+  const inp = h('input', { class: 'in ltr', type: 'email', name: 'email', autocomplete: 'username', inputMode: 'email', placeholder: 'you@example.com', maxLength: 254, spellcheck: false, value: pendingEmail });
+  const hint = h('div', { class: 'hint err' });
+  const btn = h('button', { class: 'btn gold wide', type: 'submit', text: 'ارسال کد ورود' });
+  const form = h('form', { noValidate: true }, h('label', { class: 'f' }, h('span', { text: 'ایمیل مدیر' }), inp), hint, btn);
+  btn.style.marginTop = '14px';
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = inp.value.trim().toLowerCase();
+    if (!EMAIL.test(email) || email.length > 254) { inp.classList.add('err'); hint.textContent = 'یه ایمیل درست وارد کن.'; return; }
+    inp.classList.remove('err'); hint.textContent = '';
+    busy(btn, async () => {
+      const r = await gt('/otp', { body: { email, create_user: false } });
+      if (!r.ok) { hint.textContent = gtErr(r, 'ارسال کد انجام نشد؛ دوباره امتحان کن.'); return; }
+      pendingEmail = email;
+      showCode();
+    });
+  });
+  const pw = h('button', { class: 'btn ghost wide', type: 'button', text: 'برگشت به ورود با پسورد', on: { click: showLogin } });
+  pw.style.marginTop = '8px'; form.append(pw);
+  card.append(h('p', { class: 'muted small', text: 'یه کد یک‌بارمصرف به ایمیلت فرستاده می‌شه. (این راه فقط برای وقتیه که پسوردت رو فراموش کردی یا هنوز پسورد نذاشتی.)' }), form);
+  inp.focus();
+}
+function showCode() {
+  const card = authFrame('کد ایمیل');
+  const inp = h('input', { class: 'in code-in mono', type: 'text', name: 'code', autocomplete: 'one-time-code', inputMode: 'numeric', maxLength: 10, placeholder: '------', enterkeyhint: 'done' });
+  const hint = h('div', { class: 'hint err' });
+  const btn = h('button', { class: 'btn gold wide', type: 'submit', text: 'تأیید کد' });
+  btn.style.marginTop = '14px';
+  const back = h('button', { class: 'btn ghost wide', type: 'button', text: 'تغییر ایمیل / ارسال دوباره', on: { click: showLoginOtp } });
+  back.style.marginTop = '8px';
+  inp.addEventListener('input', () => { const v = toLatinDigits(inp.value).replace(/\D/g, '').slice(0, 10); if (v !== inp.value) inp.value = v; });
+  const form = h('form', { noValidate: true }, h('label', { class: 'f' }, h('span', {}, 'کدی که به ', h('bdi', { class: 'ltr', text: pendingEmail }), ' فرستاده شد'), inp), hint, btn, back);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const token = toLatinDigits(inp.value).replace(/\D/g, '');
+    if (token.length < 6 || token.length > 10) { inp.classList.add('err'); hint.textContent = 'کد باید عدد باشه (معمولاً ۶ رقم).'; return; }
+    inp.classList.remove('err'); hint.textContent = '';
+    busy(btn, async () => {
+      const r = await gt('/verify', { body: { type: 'email', email: pendingEmail, token } });
+      if (!r.ok || !r.data || typeof r.data.access_token !== 'string') { hint.textContent = gtErr(r, 'کد اشتباهه یا منقضی شده.'); inp.select(); return; }
+      setSess(r.data); lastAct = Date.now(); touch();
+      viaOtp = true;
+      startMfa();
+    });
+  });
+  card.append(form);
+  inp.focus();
+}
+function toLatinDigits(v) { return String(v).replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06F0)).replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660)); }
+
+/* ======= ورود دومرحله‌ای (TOTP) ======= */
+async function startMfa() {
+  stage = 'mfa';
+  const card = authFrame('ورود دومرحله‌ای');
+  card.append(h('div', { class: 'loading', text: 'در حال بررسی…' }));
+  const u = await gt('/user', { method: 'GET', token: S && S.access_token });
+  if (!S) return;
+  if (!u.ok || !u.data) {
+    if (u.status === 401 || u.status === 403) { endSession(ERR.AUTH); return; }
+    clear(card); card.append(h('h2', { text: 'ورود دومرحله‌ای' }), h('p', { class: 'muted', text: gtErr(u, 'خطا در دریافت اطلاعات حساب.') }),
+      h('button', { class: 'btn gold wide', type: 'button', text: 'دوباره امتحان کن', on: { click: startMfa } }));
+    return;
+  }
+  const factors = Array.isArray(u.data.factors) ? u.data.factors : [];
+  const verified = factors.find((f) => f && f.factor_type === 'totp' && f.status === 'verified');
+  if (verified) { showTotp(card, verified.id, null); return; }
+  for (const f of factors) {
+    if (f && f.status !== 'verified' && typeof f.id === 'string') await gt('/factors/' + encodeURIComponent(f.id), { method: 'DELETE', token: S.access_token });
+  }
+  const en = await gt('/factors', { token: S.access_token, body: { factor_type: 'totp', friendly_name: 'shabban-admin' } });
+  if (!S) return;
+  if (!en.ok || !en.data || typeof en.data.id !== 'string' || !en.data.totp) {
+    clear(card); card.append(h('h2', { text: 'ورود دومرحله‌ای' }), h('p', { class: 'muted', text: gtErr(en, 'فعال‌سازی ورود دومرحله‌ای انجام نشد. (شاید MFA تو تنظیمات پروژه خاموشه)') }),
+      h('div', { class: 'btns' }, h('button', { class: 'btn gold', type: 'button', text: 'دوباره', on: { click: startMfa } }), h('button', { class: 'btn ghost', type: 'button', text: 'خروج', on: { click: () => endSession() } })));
+    return;
+  }
+  showTotp(card, en.data.id, en.data.totp);
+}
+function showTotp(card, factorId, totp) {
+  clear(card);
+  card.append(h('h2', { text: totp ? 'فعال‌سازی ورود دومرحله‌ای' : 'کد Authenticator' }));
+  if (totp) {
+    const secret = typeof totp.secret === 'string' ? totp.secret : '';
+    card.append(
+      h('p', { class: 'muted small', text: 'برای امنیت پنل، یه‌بار باید برنامه‌ی Google Authenticator (یا هر برنامه‌ی TOTP) رو وصل کنی:' }),
+      h('ol', { class: 'steps' },
+        h('li', { text: 'برنامه‌ی Google Authenticator رو باز کن و دکمه‌ی + رو بزن.' }),
+        h('li', { text: 'گزینه‌ی «Enter a setup key» رو بزن (اگه پنل رو با یه دستگاه دیگه باز کردی، می‌تونی QR رو اسکن کنی).' }),
+        h('li', { text: 'یه اسم دلخواه بنویس (مثلاً Shabban) و کلید پایین رو کپی و paste کن؛ نوع: Time based.' }),
+        h('li', { text: 'کد ۶ رقمی‌ای که برنامه نشون می‌ده رو این پایین وارد کن.' })));
+    const qr = typeof totp.qr_code === 'string' ? totp.qr_code : '';
+    if (qr) {
+      const src = qr.startsWith('data:') ? qr : 'data:image/svg+xml;utf-8,' + encodeURIComponent(qr);
+      if (/^data:image\/svg\+xml[;,]/.test(src)) card.append(h('div', { class: 'qr' }, h('img', { src, alt: 'QR کد ورود دومرحله‌ای' })));
+    }
+    if (secret) {
+      const cb = h('button', { class: 'btn sm', type: 'button', text: 'کپی کلید', on: { click: () => copyText(secret, cb) } });
+      card.append(h('div', { class: 'small muted', text: 'کلید تنظیم (Setup key):' }), h('div', { class: 'secret mono', text: secret.replace(/(.{4})/g, '$1 ').trim() }),
+        h('div', { class: 'btns' }, cb));
+      cb.parentNode.style.justifyContent = 'center'; cb.parentNode.style.marginTop = '8px';
+      card.append(h('p', { class: 'small muted', text: 'این کلید رو جایی نفرست و اسکرین‌شات نگیر.' }));
+    }
+  } else {
+    card.append(h('p', { class: 'muted small', text: 'کد ۶ رقمی برنامه‌ی Authenticator رو وارد کن.' }));
+  }
+  const inp = h('input', { class: 'in code-in mono', type: 'text', name: 'totp', autocomplete: 'one-time-code', inputMode: 'numeric', maxLength: 6, placeholder: '------' });
+  inp.addEventListener('input', () => { const v = toLatinDigits(inp.value).replace(/\D/g, '').slice(0, 6); if (v !== inp.value) inp.value = v; });
+  const hint = h('div', { class: 'hint err' });
+  const btn = h('button', { class: 'btn gold wide', type: 'submit', text: 'تأیید و ورود' });
+  btn.style.marginTop = '14px';
+  const out = h('button', { class: 'btn ghost wide', type: 'button', text: 'خروج', on: { click: () => endSession() } });
+  out.style.marginTop = '8px';
+  const form = h('form', { noValidate: true }, h('label', { class: 'f' }, h('span', { text: 'کد ۶ رقمی' }), inp), hint, btn, out);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = toLatinDigits(inp.value).replace(/\D/g, '');
+    if (code.length !== 6) { inp.classList.add('err'); hint.textContent = 'کد باید ۶ رقم باشه.'; return; }
+    inp.classList.remove('err'); hint.textContent = '';
+    busy(btn, async () => {
+      if (!S) return;
+      const fid = encodeURIComponent(factorId);
+      const ch = await gt('/factors/' + fid + '/challenge', { token: S.access_token, body: {} });
+      if (!ch.ok || !ch.data || typeof ch.data.id !== 'string') { if (ch.status === 401) return endSession(ERR.AUTH); hint.textContent = gtErr(ch, 'ساخت چالش انجام نشد؛ دوباره امتحان کن.'); return; }
+      const vr = await gt('/factors/' + fid + '/verify', { token: S.access_token, body: { challenge_id: ch.data.id, code } });
+      if (!vr.ok || !vr.data || typeof vr.data.access_token !== 'string') { if (vr.status === 401) return endSession(ERR.AUTH); hint.textContent = gtErr(vr, 'کد اشتباهه؛ دوباره امتحان کن.'); inp.value = ''; inp.focus(); return; }
+      setSess(vr.data);
+      await enterApp();
+    });
+  });
+  card.append(form);
+  inp.focus();
+}
+
+/* ======= ورود به برنامه ======= */
+async function enterApp() {
+  const r = await api('whoami', {}, []);
+  if (!r.ok) return; // api خودش خطا رو مدیریت کرده
+  myEmail = typeof r.email === 'string' ? r.email : '';
+  stage = 'app';
+  buildShell();
+  if (viaOtp) { viaOtp = false; if (location.hash !== '#/settings') location.hash = '#/settings'; toast('برای ورودهای بعدی، یه پسورد قوی تو «تنظیمات» بذار.', 'ok'); }
+  route();
+}
+let view, emailEl, navLinks = {};
+function buildShell() {
+  clear(root);
+  emailEl = h('span', { text: myEmail });
+  const out = h('button', { class: 'btn sm ghost', type: 'button', text: 'خروج', on: { click: async () => { if (await confirmBox('خروج', 'از پنل خارج می‌شی؟', 'خروج')) endSession('خارج شدی.', 'ok'); } } });
+  const tabs = [['dash', 'داشبورد'], ['users', 'کاربران'], ['events', 'رویدادها'], ['feedback', 'نظرها'], ['settings', 'تنظیمات']];
+  const nav = h('nav', { class: 'tabs', 'aria-label': 'بخش‌ها' });
+  navLinks = {};
+  for (const [k, t] of tabs) { const a = h('a', { href: '#/' + k, text: t }); navLinks[k] = a; nav.append(a); }
+  view = h('main', { class: 'wrap', id: 'view' });
+  root.append(h('header', { class: 'top' },
+    h('div', { class: 'topin' }, h('div', { class: 'brand' }, h('div', { class: 'moon' }), h('div', { class: 'bt' }, h('b', { text: 'شب‌بان · مدیریت' }), emailEl)), out),
+    nav), view);
+}
+let gen = 0;
+function route() {
+  if (stage !== 'app' || !view) return;
+  const hs = location.hash;
+  let m, key;
+  gen++;
+  clear(view);
+  window.scrollTo(0, 0);
+  if (hs === '#/users') { key = 'users'; viewUsers(); }
+  else if ((m = /^#\/user\/([0-9a-f-]{36})$/i.exec(hs)) && UUID.test(m[1])) { key = 'users'; viewUser(m[1].toLowerCase()); }
+  else if (hs === '#/events') { key = 'events'; viewEvents(); }
+  else if (hs === '#/feedback') { key = 'feedback'; viewFeedback(); }
+  else if (hs === '#/settings') { key = 'settings'; viewSettings(); }
+  else { key = 'dash'; viewDash(); }
+  for (const k in navLinks) { navLinks[k].classList.toggle('on', k === key); if (k === key) navLinks[k].setAttribute('aria-current', 'page'); else navLinks[k].removeAttribute('aria-current'); }
+}
+addEventListener('hashchange', route);
+const loading = () => h('div', { class: 'loading', text: 'در حال بارگذاری…' });
+function failBox(retry) { return h('div', { class: 'empty' }, h('div', { text: 'بارگذاری نشد.' }), h('button', { class: 'btn sm', type: 'button', text: 'دوباره امتحان کن', on: { click: retry } })); }
+
+/* ======= داشبورد ======= */
+async function viewDash() {
+  const my = gen;
+  view.append(h('div', { class: 'head' }, h('h2', { text: 'داشبورد' })), loading());
+  const r = await api('stats');
+  if (my !== gen) return;
+  view.lastChild.remove();
+  if (!r.ok) { view.append(failBox(route)); return; }
+  const st = (k, v, hl, unit) => h('div', { class: 'stat' + (hl ? ' hl' : '') }, h('div', { class: 'k', text: k }), h('div', { class: 'v' }, n(v), unit ? h('small', { text: unit }) : null));
+  view.append(h('div', { class: 'stats' },
+    st('کل حساب‌ها', r.accounts, true), st('پرو', r.pro, true), st('رایگان', r.free), st('مسدود', r.blocked),
+    st('فعال ۷ روز اخیر', r.active7d), st('ثبت‌نام امروز', r.new_today), st('دستگاه‌های فعال', r.devices),
+    st('برخورد به سقف دستگاه (۷ روز)', r.device_limit_hits_7d), st('کل خریدها', r.purchases_total, true),
+    st('خرید ۳۰ روز اخیر', r.purchases_30d), st('قیمت فعلی', r.price, false, 'تومان')));
+  const days = Array.isArray(r.days) ? r.days.slice(-14) : [];
+  view.append(h('div', { class: 'charts' },
+    h('div', { class: 'card chart' }, h('h3', { text: 'ثبت‌نام‌ها — ۱۴ روز اخیر' }), barChart(days, 'signups', 'ثبت‌نام')),
+    h('div', { class: 'card chart' }, h('h3', { text: 'خریدها — ۱۴ روز اخیر' }), barChart(days, 'purchases', 'خرید'))));
+}
+function parseDay(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s)); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)) : null; }
+function barChart(days, key, label) {
+  const wrap = h('div');
+  const read = h('div', { class: 'read' });
+  if (!days.length) { wrap.append(h('div', { class: 'empty', text: 'داده‌ای نیست.' })); return wrap; }
+  const W = 336, H = 150, padT = 14, padB = 24, padS = 26, slot = (W - padS) / days.length, bw = Math.max(4, Math.min(16, slot - 6));
+  const vals = days.map((d) => Math.max(0, Number(d[key]) || 0));
+  const max = Math.max(1, ...vals);
+  const top = max <= 2 ? 2 : max <= 4 ? 4 : Math.ceil(max / 4) * 4;
+  const y = (v) => padT + (H - padT - padB) * (1 - v / top);
+  const svg = s('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': label + ' در ۱۴ روز اخیر' });
+  for (const g of [top, top / 2]) {
+    svg.append(s('line', { class: 'grid', x1: 0, x2: W - padS, y1: y(g), y2: y(g) }));
+    const t = s('text', { x: W - padS + 4, y: y(g) + 3.5, 'text-anchor': 'start' }); t.textContent = n(Math.round(g)); svg.append(t);
+  }
+  svg.append(s('line', { class: 'base', x1: 0, x2: W - padS, y1: H - padB, y2: H - padB }));
+  const tz = 'UTC';
+  const total = vals.reduce((a, b) => a + b, 0);
+  const setRead = (i) => {
+    clear(read);
+    if (i < 0) { read.append('مجموع ۱۴ روز: ', h('b', { text: n(total) }), ' ' + label); return; }
+    const d = parseDay(days[i].day);
+    read.append((d ? new Intl.DateTimeFormat('fa-IR', { weekday: 'short', month: 'long', day: 'numeric', timeZone: tz }).format(d) : '') + ': ', h('b', { text: n(vals[i]) }), ' ' + label);
+  };
+  const bars = [];
+  days.forEach((d, i) => {
+    // راست‌به‌چپ: قدیمی‌ترین روز سمت راست، امروز سمت چپ
+    const cx = (W - padS) - slot * (i + 0.5);
+    const v = vals[i];
+    const by = y(v), bh = Math.max(0, H - padB - by);
+    let bar;
+    if (bh > 0) {
+      const rr = Math.min(4, bw / 2, bh);
+      const x0 = cx - bw / 2, x1 = cx + bw / 2, yb = H - padB;
+      bar = s('path', { class: 'bar', d: 'M' + x0 + ',' + yb + 'V' + (by + rr) + 'Q' + x0 + ',' + by + ' ' + (x0 + rr) + ',' + by + 'H' + (x1 - rr) + 'Q' + x1 + ',' + by + ' ' + x1 + ',' + (by + rr) + 'V' + yb + 'Z' });
+      svg.append(bar);
+    }
+    bars.push(bar);
+    const pd = parseDay(d.day);
+    if (i === days.length - 1 || i % 2 === (days.length - 1) % 2) {
+      const t = s('text', { x: cx, y: H - padB + 14, 'text-anchor': 'middle' });
+      t.textContent = i === days.length - 1 ? 'امروز' : (pd ? new Intl.DateTimeFormat('fa-IR', { day: 'numeric', timeZone: tz }).format(pd) : '');
+      svg.append(t);
+    }
+    const hit = s('rect', { class: 'hit', x: cx - slot / 2, y: padT, width: slot, height: H - padT - padB + 2, tabindex: 0 });
+    const on = () => { bars.forEach((b) => b && b.classList.remove('on')); if (bar) bar.classList.add('on'); setRead(i); };
+    const off = () => { if (bar) bar.classList.remove('on'); setRead(-1); };
+    hit.addEventListener('pointerenter', on); hit.addEventListener('focus', on); hit.addEventListener('click', on);
+    hit.addEventListener('pointerleave', off); hit.addEventListener('blur', off);
+    svg.append(hit);
+  });
+  setRead(-1);
+  wrap.append(svg, read);
+  return wrap;
+}
+
+/* ======= کاربران ======= */
+const US = { q: '', filter: 'all', page: 0 };
+function viewUsers() {
+  const my = gen;
+  const inp = h('input', { class: 'in', dir: 'auto', type: 'search', placeholder: 'جستجوی ایمیل…', maxLength: 120, value: US.q, autocomplete: 'off', spellcheck: false, 'aria-label': 'جستجوی ایمیل' });
+  const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'فیلتر' });
+  const list = h('div', { class: 'list' });
+  const pager = h('div', { class: 'pager' });
+  const count = h('span', { class: 'muted small' });
+  for (const [k, t] of [['all', 'همه'], ['pro', 'پرو'], ['free', 'رایگان'], ['blocked', 'مسدود']]) {
+    const c = h('button', { class: 'chip' + (US.filter === k ? ' on' : ''), type: 'button', text: t, 'aria-pressed': String(US.filter === k), on: { click: () => {
+      if (US.filter === k) return;
+      US.filter = k; US.page = 0;
+      for (const x of chips.children) { const on = x === c; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }
+      load();
+    } } });
+    chips.append(c);
+  }
+  let deb = 0, req = 0;
+  inp.addEventListener('input', () => { clearTimeout(deb); deb = setTimeout(() => { const q = inp.value.trim().slice(0, 120); if (q === US.q) return; US.q = q; US.page = 0; load(); }, 350); });
+  view.append(h('div', { class: 'head' }, h('h2', { text: 'کاربران' }), count), h('div', { class: 'toolbar' }, inp, chips), list, pager);
+  async function load() {
+    const id = ++req;
+    clear(list); clear(pager); list.append(loading());
+    const r = await api('users', { q: US.q, filter: US.filter, page: US.page, size: PAGE });
+    if (my !== gen || id !== req) return;
+    clear(list);
+    if (!r.ok) { list.append(failBox(load)); return; }
+    const rows = Array.isArray(r.rows) ? r.rows : [];
+    const total = Number(r.total) || 0;
+    count.textContent = n(total) + ' حساب';
+    if (!rows.length) { list.append(h('div', { class: 'empty', text: US.q ? 'کاربری با این ایمیل پیدا نشد.' : 'کاربری نیست.' })); }
+    for (const u of rows) {
+      if (!u || !UUID.test(String(u.user_id))) continue;
+      list.append(h('a', { class: 'row', href: '#/user/' + String(u.user_id).toLowerCase() },
+        h('div', { class: 'l1' }, h('span', { class: 'em', text: String(u.email || '') }), badges(u)),
+        h('div', { class: 'l2' }, h('span', { text: 'دستگاه: ' + n(u.devices) }), h('span', { text: 'آخرین بازدید: ' + dt(u.last_seen) }), h('span', { text: 'عضویت: ' + dt(u.created_at) }))));
+    }
+    const pages = Math.max(1, Math.ceil(total / PAGE));
+    if (pages > 1 || US.page > 0) {
+      const prev = h('button', { class: 'btn sm', type: 'button', text: '→ قبلی', disabled: US.page <= 0, on: { click: () => { US.page--; load(); window.scrollTo(0, 0); } } });
+      const next = h('button', { class: 'btn sm', type: 'button', text: 'بعدی ←', disabled: US.page >= pages - 1, on: { click: () => { US.page++; load(); window.scrollTo(0, 0); } } });
+      pager.append(prev, h('span', { text: 'صفحه‌ی ' + n(US.page + 1) + ' از ' + n(pages) }), next);
+    }
+  }
+  load();
+}
+function badges(u) {
+  const b = h('span', { class: 'badges' });
+  b.append(u.pro ? h('span', { class: 'badge pro', text: 'پرو' }) : h('span', { class: 'badge free', text: 'رایگان' }));
+  if (u.blocked) b.append(h('span', { class: 'badge blk', text: 'مسدود' }));
+  return b;
+}
+
+/* ======= جزئیات کاربر ======= */
+async function viewUser(uid) {
+  const my = gen;
+  const back = h('a', { class: 'btn sm ghost back', href: '#/users', text: '→ بازگشت به کاربران' });
+  view.append(back, loading());
+  const r = await api('user', { user_id: uid });
+  if (my !== gen) return;
+  view.lastChild.remove();
+  if (!r.ok || !r.account) { view.append(failBox(route)); return; }
+  const a = r.account;
+  const devices = Array.isArray(r.devices) ? r.devices : [];
+  const purchases = Array.isArray(r.purchases) ? r.purchases : [];
+  const events = Array.isArray(r.events) ? r.events : [];
+  const reload = () => { if (my === gen) route(); };
+
+  const src = { myket: 'مایکت', admin: 'مدیر' };
+  const kv = h('dl', { class: 'kv' });
+  const row = (k, v) => kv.append(h('dt', { text: k }), h('dd', {}, v));
+  row('ایمیل', h('bdi', { class: 'ltr', text: String(a.email || '') }));
+  row('وضعیت', badges(a));
+  row('پرو از', dt(a.pro_since));
+  row('منبع پرو', a.pro_source ? (src[a.pro_source] || String(a.pro_source)) : '—');
+  row('تاریخ عضویت', dt(a.created_at));
+  row('آخرین بازدید', dt(a.last_seen));
+  row('شناسه', h('bdi', { class: 'ltr mono small', text: String(a.user_id || uid) }));
+
+  const proBtn = h('button', { class: 'btn ' + (a.pro ? 'red' : 'gold'), type: 'button', text: a.pro ? 'گرفتن پرو' : 'دادن پرو' });
+  proBtn.addEventListener('click', async () => {
+    const to = !a.pro;
+    if (!await confirmBox(to ? 'دادن پرو' : 'گرفتن پرو', (to ? 'نسخه‌ی پرو به ' : 'نسخه‌ی پرو از ') + String(a.email || '') + (to ? ' داده بشه؟' : ' گرفته بشه؟'), to ? 'بله، پرو بشه' : 'بله، بگیر', !to)) return;
+    busy(proBtn, async () => { const x = await api('set_pro', { user_id: uid, pro: to }); if (x.ok) { toast(to ? 'پرو داده شد.' : 'پرو گرفته شد.', 'ok'); reload(); } });
+  });
+  const blkBtn = h('button', { class: 'btn ' + (a.blocked ? 'green' : 'red'), type: 'button', text: a.blocked ? 'رفع مسدودی' : 'مسدود کردن' });
+  blkBtn.addEventListener('click', async () => {
+    const to = !a.blocked;
+    if (!await confirmBox(to ? 'مسدود کردن حساب' : 'رفع مسدودی', String(a.email || '') + (to ? ' مسدود بشه؟ دیگه نمی‌تونه از امکانات حساب استفاده کنه.' : ' از مسدودی خارج بشه؟'), to ? 'مسدود کن' : 'رفع مسدودی', to)) return;
+    busy(blkBtn, async () => { const x = await api('set_blocked', { user_id: uid, blocked: to }); if (x.ok) { toast(to ? 'حساب مسدود شد.' : 'مسدودی برداشته شد.', 'ok'); reload(); } });
+  });
+
+  // یادداشت
+  const note = h('textarea', { class: 'in', dir: 'auto', maxLength: 500, rows: 3, value: typeof a.note === 'string' ? a.note : '', placeholder: 'یادداشت خصوصی مدیر درباره‌ی این کاربر…' });
+  const cnt = h('span');
+  const upd = () => { cnt.textContent = n(note.value.length) + ' از ۵۰۰'; note.classList.toggle('err', note.value.length > 500); };
+  note.addEventListener('input', upd); upd();
+  const noteBtn = h('button', { class: 'btn sm gold', type: 'button', text: 'ذخیره‌ی یادداشت' });
+  noteBtn.addEventListener('click', async () => {
+    const v = note.value;
+    if (v.length > 500) { toast('یادداشت حداکثر ۵۰۰ نویسه‌ست.', 'err'); return; }
+    if (!await confirmBox('ذخیره‌ی یادداشت', 'یادداشت این کاربر ذخیره بشه؟', 'ذخیره')) return;
+    busy(noteBtn, async () => { const x = await api('set_note', { user_id: uid, note: v }); if (x.ok) toast('یادداشت ذخیره شد.', 'ok'); });
+  });
+
+  view.append(h('div', { class: 'cols' },
+    h('div', {},
+      h('div', { class: 'card' }, h('h2', { text: 'حساب' }), kv, h('div', { class: 'btns' }, proBtn, blkBtn)),
+      h('div', { class: 'card' }, h('h3', { text: 'یادداشت' }), note, h('div', { class: 'hint' }, cnt, noteBtn))),
+    h('div', {},
+      devCard(devices, uid, reload),
+      purCard(purchases))));
+  view.querySelector('.cols .card .btns').style.marginTop = '14px';
+  view.append(h('div', { class: 'card' }, h('h3', { text: 'رویدادهای اخیر این کاربر' }), events.length ? events.map((e) => evRow(e, false)) : h('div', { class: 'muted small', text: 'رویدادی ثبت نشده.' })));
+}
+function devCard(devices, uid, reload) {
+  const c = h('div', { class: 'card' }, h('h3', { text: 'دستگاه‌ها (' + n(devices.filter((d) => !d.revoked).length) + ' فعال)' }));
+  if (!devices.length) c.append(h('div', { class: 'muted small', text: 'دستگاهی ثبت نشده.' }));
+  for (const d of devices) {
+    const id = Number(d.id);
+    if (!Number.isSafeInteger(id) || id < 1) continue;
+    const b = h('button', { class: 'btn sm ' + (d.revoked ? 'green' : 'red'), type: 'button', text: d.revoked ? 'برگردوندن' : 'آزاد کردن جای دستگاه' });
+    b.addEventListener('click', async () => {
+      const rev = !d.revoked;
+      if (!await confirmBox(rev ? 'آزاد کردن جای دستگاه' : 'برگردوندن دستگاه', rev ? 'این دستگاه از حساب جدا می‌شه و جاش برای یه دستگاه دیگه آزاد می‌شه. ادامه می‌دی؟' : 'این دستگاه دوباره به حساب برگرده؟ (اگه سقف پر باشه انجام نمی‌شه)', rev ? 'آزاد کن' : 'برگردون', rev)) return;
+      busy(b, async () => { const x = await api(rev ? 'revoke_device' : 'restore_device', { user_id: uid, device_row_id: id }); if (x.ok) { toast(rev ? 'جای دستگاه آزاد شد.' : 'دستگاه برگشت.', 'ok'); reload(); } });
+    });
+    c.append(h('div', { class: 'dev' + (d.revoked ? ' revoked' : '') },
+      h('div', { class: 'l1' }, h('span', {}, h('bdi', { class: 'mono ltr', text: String(d.device || '') + '…' }), ' ', d.revoked ? h('span', { class: 'badge off', text: 'آزادشده' }) : h('span', { class: 'badge ok', text: 'فعال' })), b),
+      d.ua ? h('div', { class: 'ua', text: String(d.ua).slice(0, 300) }) : null,
+      h('div', { class: 'l2' }, h('span', { text: 'ثبت: ' + dt(d.created_at) }), h('span', { text: 'آخرین استفاده: ' + dt(d.last_seen) }), d.revoked ? h('span', { text: 'آزاد شده: ' + dt(d.revoked_at) }) : null)));
+  }
+  return c;
+}
+function purCard(purchases) {
+  const c = h('div', { class: 'card' }, h('h3', { text: 'خریدها' }));
+  if (!purchases.length) c.append(h('div', { class: 'muted small', text: 'خریدی ثبت نشده.' }));
+  for (const p of purchases) {
+    c.append(h('div', { class: 'ev' },
+      h('div', { class: 'l1' }, h('span', { class: 'kind good', text: p.source === 'myket' ? 'مایکت' : String(p.source || '—') }), h('span', { class: 'muted small', text: dt(p.created_at) })),
+      h('div', { class: 'who' }, 'order: ', String(p.order_id || '—'), ' · product: ', String(p.product_id || '—'))));
+  }
+  return c;
+}
+function evRow(e, showWho) {
+  const k = KINDS[e.kind];
+  const det = e.detail && typeof e.detail === 'object' && Object.keys(e.detail).length ? JSON.stringify(e.detail) : '';
+  return h('div', { class: 'ev' },
+    h('div', { class: 'l1' }, h('span', { class: 'kind ' + (k ? k[1] : ''), text: k ? k[0] : String(e.kind || '?') }), h('span', { class: 'muted small', text: dt(e.at) })),
+    showWho && (e.email || e.user_id) ? h('div', { class: 'who' }, e.user_id && UUID.test(String(e.user_id)) ? h('a', { href: '#/user/' + String(e.user_id).toLowerCase(), class: 'ltr', text: String(e.email || e.user_id) }) : String(e.email || '')) : null,
+    det ? h('pre', { class: 'json', text: det.length > 4000 ? det.slice(0, 4000) + '…' : det }) : null);
+}
+
+/* ======= رویدادها ======= */
+const ES = { kind: '', page: 0 };
+function viewEvents() {
+  const my = gen;
+  const sel = h('select', { class: 'in', 'aria-label': 'نوع رویداد' }, h('option', { value: '', text: 'همه‌ی رویدادها' }));
+  for (const k of Object.keys(KINDS)) sel.append(h('option', { value: k, text: KINDS[k][0], selected: ES.kind === k }));
+  const list = h('div', { class: 'card' });
+  const pager = h('div', { class: 'pager' });
+  sel.addEventListener('change', () => { ES.kind = KINDS[sel.value] ? sel.value : ''; ES.page = 0; load(); });
+  view.append(h('div', { class: 'head' }, h('h2', { text: 'رویدادها' })), h('div', { class: 'toolbar' }, sel), list, pager);
+  let req = 0;
+  async function load() {
+    const id = ++req;
+    clear(list); clear(pager); list.append(loading());
+    const r = await api('events', { kind: ES.kind, page: ES.page });
+    if (my !== gen || id !== req) return;
+    clear(list);
+    if (!r.ok) { list.append(failBox(load)); return; }
+    const rows = Array.isArray(r.rows) ? r.rows : [];
+    if (!rows.length) list.append(h('div', { class: 'muted', text: 'رویدادی نیست.' }));
+    rows.forEach((e) => list.append(evRow(e, true)));
+    if (ES.page > 0 || rows.length >= 50) {
+      pager.append(
+        h('button', { class: 'btn sm', type: 'button', text: '→ جدیدتر', disabled: ES.page <= 0, on: { click: () => { ES.page--; load(); window.scrollTo(0, 0); } } }),
+        h('span', { text: 'صفحه‌ی ' + n(ES.page + 1) }),
+        h('button', { class: 'btn sm', type: 'button', text: 'قدیمی‌تر ←', disabled: rows.length < 50, on: { click: () => { ES.page++; load(); window.scrollTo(0, 0); } } }));
+    }
+  }
+  load();
+}
+
+/* ======= نظرها (تجربه‌های کاربرها) ======= */
+const FS = { kind: '', st: 'all' };
+const FK = { bug: ['🐞 مشکل / باگ', 'blk'], good: ['👍 نکته‌ی مثبت', 'pro'], story: ['✨ تجربه‌ی جالب', 'free'] };
+function viewFeedback() {
+  const my = gen;
+  let items = [], more = false, req = 0, isAdm = true;
+  const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'فیلتر نوع' });
+  const chips2 = h('div', { class: 'chips', role: 'group', 'aria-label': 'فیلتر وضعیت' });
+  const list = h('div', { class: 'list' });
+  const moreBox = h('div', { class: 'pager' });
+  const count = h('span', { class: 'muted small' });
+  const mk = (box, arr, key) => {
+    for (const [k, t] of arr) {
+      const c = h('button', { class: 'chip' + (FS[key] === k ? ' on' : ''), type: 'button', text: t, 'aria-pressed': String(FS[key] === k), on: { click: () => {
+        if (FS[key] === k) return;
+        FS[key] = k;
+        for (const x of box.children) { const on = x === c; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }
+        if (key === 'kind') load(true); else draw();
+      } } });
+      box.append(c);
+    }
+  };
+  mk(chips, [['', 'همه‌ی نوع‌ها'], ['bug', '🐞 مشکل‌ها'], ['good', '👍 مثبت‌ها'], ['story', '✨ تجربه‌ها']], 'kind');
+  mk(chips2, [['all', 'همه'], ['noreply', 'بدون پاسخ'], ['hidden', 'پنهان‌شده (گزارش)']], 'st');
+  view.append(h('div', { class: 'head' }, h('h2', { text: 'نظرها' }), count), h('div', { class: 'toolbar' }, chips, chips2), list, moreBox);
+
+  function card(it) {
+    const k = FK[it.kind] || FK.story;
+    const c = h('div', { class: 'card fbc' + (it.hidden ? ' fbhid' : '') });
+    const meta = h('div', { class: 'fbmeta' },
+      h('span', { class: 'badge ' + k[1], text: k[0] }),
+      h('b', { text: String(it.name || '') }),
+      h('span', { text: dt(it.at) }));
+    if (it.hidden) meta.append(h('span', { class: 'badge blk', text: 'پنهان · ' + n(it.reports) + ' گزارش' }));
+    else if (Number(it.reports) > 0) meta.append(h('span', { class: 'badge free', text: n(it.reports) + ' گزارش' }));
+    c.append(meta, h('div', { class: 'fbb', text: String(it.body || '') }));
+    if (it.reply) c.append(h('div', { class: 'fbrep' }, h('small', { text: 'پاسخ شب‌بان' + (it.replyAt ? ' · ' + dt(it.replyAt) : '') }), h('div', { class: 'fbb', text: String(it.reply) })));
+    const ta = h('textarea', { class: 'in', dir: 'auto', rows: 3, maxLength: 600, placeholder: 'پاسخ شب‌بان رو بنویس…', value: String(it.reply || ''), 'aria-label': 'پاسخ' });
+    const send = h('button', { class: 'btn gold sm', type: 'button', text: it.reply ? 'ویرایش پاسخ' : 'ثبت پاسخ' });
+    send.addEventListener('click', () => busy(send, async () => {
+      const text = ta.value.trim();
+      if (!text) { toast('اول متن پاسخ رو بنویس.', 'err'); return; }
+      const r = await fbApi('reply', { id: it.id, text });
+      if (!r.ok) return;
+      it.reply = text; it.replyAt = Date.now();
+      toast('پاسخ ثبت شد ✓', 'ok');
+      c.replaceWith(card(it));
+    }));
+    const btns = h('div', { class: 'btns' }, send);
+    if (it.reply) {
+      const delR = h('button', { class: 'btn ghost sm', type: 'button', text: 'حذف پاسخ' });
+      delR.addEventListener('click', async () => {
+        if (!await confirmBox('حذف پاسخ', 'فقط پاسخ شب‌بان پاک می‌شه و نظر کاربر می‌مونه.', 'حذف پاسخ', true)) return;
+        await busy(delR, async () => {
+          const r = await fbApi('reply', { id: it.id, text: '' });
+          if (!r.ok) return;
+          it.reply = ''; it.replyAt = 0; toast('پاسخ حذف شد.', 'ok'); c.replaceWith(card(it));
+        });
+      });
+      btns.append(delR);
+    }
+    if (it.hidden) {
+      const rs = h('button', { class: 'btn green sm', type: 'button', text: 'نمایش دوباره' });
+      rs.addEventListener('click', () => busy(rs, async () => {
+        const r = await fbApi('restore', { id: it.id });
+        if (!r.ok) return;
+        it.hidden = false; it.reports = 0; toast('نظر دوباره نمایش داده می‌شه.', 'ok'); c.replaceWith(card(it)); count.textContent = n(items.length) + ' نظر';
+      }));
+      btns.append(rs);
+    }
+    const del = h('button', { class: 'btn red sm', type: 'button', text: '🗑 حذف نظر' });
+    del.addEventListener('click', async () => {
+      if (!await confirmBox('حذف نظر', 'این نظر برای همیشه پاک می‌شه و قابل برگشت نیست.', 'حذف', true)) return;
+      await busy(del, async () => {
+        const r = await fbApi('delete', { id: it.id });
+        if (!r.ok) return;
+        items = items.filter((x) => x.id !== it.id);
+        toast('نظر حذف شد.', 'ok'); c.remove(); count.textContent = n(items.length) + ' نظر';
+        if (!list.children.length) draw();
+      });
+    });
+    btns.append(del);
+    c.append(h('label', { class: 'f' }, h('span', { text: it.reply ? 'ویرایش پاسخ' : 'پاسخ به این نظر' }), ta), btns);
+    return c;
+  }
+  function draw() {
+    clear(list);
+    const rows = items.filter((it) => FS.st === 'noreply' ? !it.reply : FS.st === 'hidden' ? !!it.hidden : true);
+    count.textContent = n(items.length) + ' نظر بارگذاری شد';
+    if (!rows.length) list.append(h('div', { class: 'empty', text: items.length ? 'نظری با این فیلتر نیست (شاید در صفحه‌های قدیمی‌تر باشه).' : 'هنوز نظری ثبت نشده.' }));
+    rows.forEach((it) => list.append(card(it)));
+    clear(moreBox);
+    if (more) moreBox.append(h('button', { class: 'btn sm', type: 'button', text: 'نمایش قدیمی‌ترها', on: { click: (e) => busy(e.currentTarget, () => load(false)) } }));
+  }
+  async function load(reset) {
+    const id = ++req;
+    if (reset) { items = []; clear(list); clear(moreBox); list.append(loading()); }
+    const r = await fbApi('list', { kind: FS.kind || undefined, before: reset || !items.length ? undefined : items[items.length - 1].id });
+    if (my !== gen || id !== req) return;
+    if (!r.ok) { clear(list); list.append(failBox(() => load(true))); return; }
+    isAdm = !!(r.me && r.me.admin);
+    if (!isAdm) { clear(list); list.append(h('div', { class: 'empty', text: 'این حساب در فهرست مدیرها نیست؛ پاسخ و حذف کار نمی‌کنه.' })); }
+    items = items.concat(Array.isArray(r.items) ? r.items : []);
+    more = !!r.more;
+    draw();
+  }
+  load(true);
+}
+
+/* ======= تنظیمات ======= */
+async function viewSettings() {
+  const my = gen;
+  view.append(h('div', { class: 'head' }, h('h2', { text: 'تنظیمات' })), loading());
+  const r = await api('settings_get');
+  if (my !== gen) return;
+  view.lastChild.remove();
+  if (!r.ok) { view.append(failBox(route)); }
+  else {
+    const field = (label, inp, hintTxt) => { const hn = h('div', { class: 'hint' }, h('span', { text: hintTxt || '' })); return [h('label', { class: 'f' }, h('span', { text: label }), inp), hn]; };
+    const price = h('input', { class: 'in ltr', type: 'text', inputMode: 'numeric', maxLength: 9, value: String(Number(r.price) || 0) });
+    const dl = h('input', { class: 'in ltr', type: 'number', inputMode: 'numeric', min: 1, max: 5, step: 1, value: String(Number(r.device_limit) || 2) });
+    const gd = h('input', { class: 'in ltr', type: 'number', inputMode: 'numeric', min: 1, max: 30, step: 1, value: String(Number(r.grace_days) || 7) });
+    const an = h('textarea', { class: 'in', dir: 'auto', maxLength: 200, rows: 3, value: typeof r.announce === 'string' ? r.announce : '', placeholder: 'مثلاً: تخفیف ویژه‌ی آخر هفته!' });
+    const priceTxt = h('span');
+    const anCnt = h('span');
+    const updP = () => { price.value = toLatinDigits(price.value).replace(/\D/g, '').slice(0, 9); priceTxt.textContent = price.value ? n(price.value) + ' تومان' : ''; };
+    const updA = () => { anCnt.textContent = n(an.value.length) + ' از ۲۰۰'; };
+    price.addEventListener('input', updP); an.addEventListener('input', updA);
+    [dl, gd].forEach((x) => x.addEventListener('input', () => { const v = toLatinDigits(x.value).replace(/\D/g, ''); if (v !== x.value) x.value = v; }));
+    updP(); updA();
+    const f1 = field('قیمت نسخه‌ی پرو (تومان)', price); f1[1].append(priceTxt);
+    const f2 = field('سقف دستگاه برای هر حساب', dl, 'بین ۱ تا ۵');
+    const f3 = field('روزهای آفلاین مجاز', gd, 'بین ۱ تا ۳۰ روز — بعدش برنامه باید دوباره به سرور وصل بشه');
+    const f4 = field('اعلان برای کاربران', an, 'حداکثر ۲۰۰ نویسه؛ به‌صورت متن ساده نشون داده می‌شه'); f4[1].append(anCnt);
+    const err = h('div', { class: 'hint err' });
+    const save = h('button', { class: 'btn gold', type: 'button', text: 'ذخیره‌ی تنظیمات' });
+    save.style.marginTop = '14px';
+    save.addEventListener('click', async () => {
+      [price, dl, gd, an].forEach((x) => x.classList.remove('err'));
+      const v = { price: Number(price.value), device_limit: Number(dl.value), grace_days: Number(gd.value), announce: an.value.replace(/[<>]/g, '').trim() };
+      const bad = [];
+      if (!price.value || !Number.isInteger(v.price) || v.price < 0 || v.price > 100000000) { price.classList.add('err'); bad.push('قیمت'); }
+      if (!Number.isInteger(v.device_limit) || v.device_limit < 1 || v.device_limit > 5) { dl.classList.add('err'); bad.push('سقف دستگاه'); }
+      if (!Number.isInteger(v.grace_days) || v.grace_days < 1 || v.grace_days > 30) { gd.classList.add('err'); bad.push('روزهای آفلاین'); }
+      if (v.announce.length > 200) { an.classList.add('err'); bad.push('اعلان'); }
+      if (bad.length) { err.textContent = 'این موارد درست نیستن: ' + bad.join('، '); return; }
+      err.textContent = '';
+      const sum = 'قیمت: ' + n(v.price) + ' تومان · سقف دستگاه: ' + n(v.device_limit) + ' · آفلاین مجاز: ' + n(v.grace_days) + ' روز' + (v.announce ? ' · اعلان: «' + v.announce + '»' : ' · بدون اعلان');
+      if (!await confirmBox('ذخیره‌ی تنظیمات', sum + '\nاین تغییرات برای همه‌ی کاربران اعمال می‌شه.', 'ذخیره')) return;
+      busy(save, async () => { const x = await api('settings_set', v); if (x.ok) toast('تنظیمات ذخیره شد.', 'ok'); });
+    });
+    view.append(h('div', { class: 'card' }, f1, f2, f3, f4, err, save));
+  }
+  // پسورد
+  {
+    const p1 = h('input', { class: 'in ltr', type: 'password', name: 'new-password', autocomplete: 'new-password', maxLength: 128, placeholder: 'پسورد جدید (حداقل ۱۲ نویسه)' });
+    const p2 = h('input', { class: 'in ltr', type: 'password', name: 'new-password2', autocomplete: 'new-password', maxLength: 128, placeholder: 'تکرار پسورد' });
+    const ph = h('div', { class: 'hint err' });
+    const pb = h('button', { class: 'btn gold', type: 'button', text: 'ذخیره‌ی پسورد' });
+    pb.style.marginTop = '14px';
+    pb.addEventListener('click', () => {
+      p1.classList.remove('err'); p2.classList.remove('err'); ph.textContent = ''; ph.className = 'hint err';
+      const a = p1.value, b = p2.value;
+      if (a.length < 12) { p1.classList.add('err'); ph.textContent = 'پسورد باید حداقل ۱۲ نویسه باشه.'; return; }
+      if (a.length > 128) { p1.classList.add('err'); ph.textContent = 'پسورد خیلی بلنده (حداکثر ۱۲۸).'; return; }
+      if (!/[A-Za-z؀-ۿ]/.test(a) || !/\d/.test(a)) { p1.classList.add('err'); ph.textContent = 'پسورد باید هم حرف داشته باشه هم عدد.'; return; }
+      if (a.toLowerCase().includes((myEmail.split('@')[0] || '@@').toLowerCase())) { p1.classList.add('err'); ph.textContent = 'پسورد نباید شامل اسم ایمیلت باشه.'; return; }
+      if (a !== b) { p2.classList.add('err'); ph.textContent = 'تکرار پسورد با پسورد یکی نیست.'; return; }
+      busy(pb, async () => {
+        if (!S) return;
+        const r = await gt('/user', { method: 'PUT', token: S.access_token, body: { password: a } });
+        if (r.status === 401) { endSession(ERR.AUTH); return; }
+        if (!r.ok) { ph.textContent = gtErr(r, 'ذخیره‌ی پسورد انجام نشد؛ دوباره امتحان کن.'); return; }
+        p1.value = ''; p2.value = '';
+        toast('پسورد ذخیره شد. دفعه‌ی بعد با ایمیل + پسورد + کد برنامه وارد شو.', 'ok');
+      });
+    });
+    view.append(h('div', { class: 'card' }, h('h3', { text: 'پسورد ورود' }),
+      h('p', { class: 'muted small', text: 'با پسورد، دیگه هر بار ایمیل نمی‌ره. ورود = ایمیل + پسورد + کد Authenticator. پسوردی بذار که جای دیگه استفاده نکردی.' }),
+      h('label', { class: 'f' }, h('span', { text: 'پسورد جدید' }), p1), h('label', { class: 'f' }, h('span', { text: 'تکرار' }), p2), ph, pb));
+  }
+  // کلید عمومی
+  const pkCard = h('div', { class: 'card' }, h('h3', { text: 'کلید عمومی لایسنس' }),
+    h('p', { class: 'muted small', text: 'این کلید عمومیه و امن؛ باید برای برنامه‌نویس فرستاده بشه تا داخل برنامه قرار بگیره و برنامه بتونه لایسنس‌هایی که سرور امضا می‌کنه رو بررسی کنه.' }));
+  const pkBody = h('div');
+  const pkBtn = h('button', { class: 'btn', type: 'button', text: 'نمایش کلید عمومی' });
+  pkBtn.addEventListener('click', () => busy(pkBtn, async () => {
+    const x = await api('pubkey');
+    if (my !== gen || !x.ok) return;
+    clear(pkBody);
+    if (!x.pub || typeof x.pub !== 'object') { pkBody.append(h('div', { class: 'muted small', text: 'هنوز کلیدی ساخته نشده (اولین درخواست لایسنس، کلید رو می‌سازه).' })); return; }
+    const txt = JSON.stringify({ kty: x.pub.kty, crv: x.pub.crv, x: x.pub.x, y: x.pub.y });
+    const cb = h('button', { class: 'btn sm gold', type: 'button', text: 'کپی', on: { click: () => copyText(txt, cb) } });
+    pkBody.append(h('div', { class: 'pk mono', text: txt }), cb);
+  }));
+  pkCard.append(pkBody, pkBtn);
+  view.append(pkCard);
+}
+
+/* ======= شروع ======= */
+function boot() {
+  if (!SB_KEY) { showSetup(); return; }
+  S = loadSess();
+  let act = 0;
+  try { act = Number(sessionStorage.getItem(AKEY)) || 0; } catch (_) {}
+  if (S && (!act || Date.now() - act > IDLE_MS)) { endSession(act ? 'به‌خاطر ۳۰ دقیقه بی‌فعالیتی، از حساب خارج شدی.' : null); return; }
+  lastAct = act || Date.now();
+  if (!S) { showLogin(); return; }
+  schedRefresh();
+  authFrame('', 'در حال بارگذاری…');
+  if (aal() === 'aal2') enterApp(); else startMfa();
+}
+boot();
+})();
+</script>
+</body>
+</html>
