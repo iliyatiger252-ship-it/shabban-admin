@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MPzK2/d9ZqaeZcWnNezbyrWlNdz2YIJd5rFLL6SLPH4='; style-src 'sha256-RQQDo90e2vYUMWszvNriRCfncyb+ImTDIGVtMLnGMP4='; img-src data:; connect-src https://wxjfedwylfkvfaolqeda.supabase.co; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-vx9TzhqINmA2vOeeaU8wDa2tZnNvnbp7f4JLmX2HBpI='; style-src 'sha256-RQQDo90e2vYUMWszvNriRCfncyb+ImTDIGVtMLnGMP4='; img-src data:; connect-src https://wxjfedwylfkvfaolqeda.supabase.co; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex,nofollow">
@@ -200,6 +200,7 @@ const SB_KEY = 'sb_publishable_3VTATqAZu8JKEQwWfB3Ipg_EQGvOf7F'; // کلید pub
 
 const FN_URL = SB_URL + '/functions/v1/admin';
 const FB_URL = SB_URL + '/functions/v1/feedback';
+const INFO_URL = SB_URL + '/functions/v1/appinfo';
 const SKEY = 'shabban_admin_s';
 const AKEY = 'shabban_admin_act';
 const IDLE_MS = 30 * 60 * 1000;
@@ -395,7 +396,7 @@ function refresh() {
 async function endSession(msg, kind) {
   const tok = S && S.access_token;
   wipe();
-  if (tok) gt('/logout', { token: tok }).catch(() => {});
+  if (tok) gt('/logout?scope=local', { token: tok }).catch(() => {});
   stage = 'login';
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   showLogin();
@@ -1098,6 +1099,57 @@ async function viewSettings() {
       busy(save, async () => { const x = await api('settings_set', v); if (x.ok) toast('تنظیمات ذخیره شد.', 'ok'); });
     });
     view.append(h('div', { class: 'card' }, f1, f2, f3, f4, err, save));
+  }
+  // قیمت تخفیفی + آخرین نسخه (تابع جدای appinfo)
+  {
+    const card = h('div', { class: 'card' }, h('h3', { text: 'نمایش قیمت و پیام آپدیت' }), loading());
+    view.append(card);
+    const x = await api('get', {}, ['SERVER', 'BAD_ACTION', 'NETWORK', 'RATE'], INFO_URL);
+    if (my !== gen) return;
+    card.lastChild.remove();
+    if (!x.ok) {
+      card.append(h('p', { class: 'muted small', text: 'تابع appinfo هنوز تو سوپابیس اضافه نشده یا در دسترس نیست.' }));
+    } else {
+      const cur = r && r.ok ? Number(r.price) || 0 : 0;
+      let mode = Number(x.price_old) > 0 ? 'disc' : 'normal';
+      const old = h('input', { class: 'in ltr', type: 'text', inputMode: 'numeric', maxLength: 9, value: Number(x.price_old) > 0 ? String(x.price_old) : '', placeholder: 'مثلاً 250000' });
+      const oldTxt = h('span');
+      const oldWrap = h('div', {}, h('label', { class: 'f' }, h('span', { text: 'قیمت قبل از تخفیف (تومان) — با خط روش نشون داده می‌شه' }), old), h('div', { class: 'hint' }, oldTxt));
+      const chips = h('div', { class: 'chips', role: 'group', 'aria-label': 'نوع نمایش قیمت' });
+      let cN, cD;
+      const upd = () => {
+        cN.classList.toggle('on', mode === 'normal'); cN.setAttribute('aria-pressed', String(mode === 'normal'));
+        cD.classList.toggle('on', mode === 'disc'); cD.setAttribute('aria-pressed', String(mode === 'disc'));
+        oldWrap.style.display = mode === 'disc' ? '' : 'none';
+      };
+      cN = h('button', { class: 'chip', type: 'button', text: 'عادی (فقط قیمت فعلی)', on: { click: () => { mode = 'normal'; upd(); } } });
+      cD = h('button', { class: 'chip', type: 'button', text: 'تخفیف (قیمت قبلی خط بخوره)', on: { click: () => { mode = 'disc'; upd(); } } });
+      chips.append(cN, cD);
+      const updOld = () => { old.value = toLatinDigits(old.value).replace(/\D/g, '').slice(0, 9); oldTxt.textContent = old.value ? n(old.value) + ' تومان → ' + n(cur) + ' تومان' : ''; };
+      old.addEventListener('input', updOld); updOld();
+      const lv = h('input', { class: 'in ltr', type: 'text', maxLength: 11, value: typeof x.latest_version === 'string' ? x.latest_version : '', placeholder: 'مثلاً 1.2' });
+      const err = h('div', { class: 'hint err' });
+      const sv = h('button', { class: 'btn gold', type: 'button', text: 'ذخیره' });
+      sv.style.marginTop = '14px';
+      sv.addEventListener('click', async () => {
+        err.textContent = ''; old.classList.remove('err'); lv.classList.remove('err');
+        const po = mode === 'disc' ? Number(old.value) : 0;
+        if (mode === 'disc' && (!old.value || !Number.isInteger(po) || po <= 0 || po > 100000000)) { old.classList.add('err'); err.textContent = 'قیمت قبل از تخفیف رو درست وارد کن.'; return; }
+        if (mode === 'disc' && cur && po <= cur) { old.classList.add('err'); err.textContent = 'قیمت قبل از تخفیف باید از قیمت فعلی (' + n(cur) + ' تومان) بیشتر باشه.'; return; }
+        const ver = toLatinDigits(lv.value.trim());
+        if (ver && !/^\d{1,3}(\.\d{1,3}){0,2}$/.test(ver)) { lv.classList.add('err'); err.textContent = 'شماره‌ی نسخه باید مثل 1.2 باشه.'; return; }
+        const sum = (mode === 'disc' ? 'تخفیف: ' + n(po) + ' (خط‌خورده) → ' + n(cur) + ' تومان' : 'قیمت عادی، بدون خط') + ' · آخرین نسخه: ' + (ver || 'خالی (پیام آپدیت خاموش)');
+        if (!await confirmBox('ذخیره', sum + '\nپیام «آپدیت کن» فقط به کسایی نشون داده می‌شه که نسخه‌شون از این عدد قدیمی‌تره. این عدد رو فقط بعد از تأیید آپدیت در مایکت عوض کن.', 'ذخیره')) return;
+        busy(sv, async () => { const y = await api('set', { price_old: po, latest_version: ver }, null, INFO_URL); if (y.ok) toast('ذخیره شد.', 'ok'); });
+      });
+      upd();
+      card.append(
+        h('p', { class: 'muted small', text: '«تخفیف» یعنی تو برنامه، قیمت قبلی با خط روش و قیمت فعلی (از کارت بالا) زیرش نشون داده می‌شه. یادت باشه قیمت واقعی خرید رو تو پنل مایکت هم عوض کنی.' }),
+        chips, oldWrap,
+        h('label', { class: 'f' }, h('span', { text: 'آخرین نسخه‌ی برنامه (برای پیام «آپدیت کن»)' }), lv),
+        h('div', { class: 'hint' }, h('span', { text: 'خالی = پیام آپدیت خاموش. فقط بعد از تأیید مایکت عوض کن.' })),
+        err, sv);
+    }
   }
   // پسورد
   {
